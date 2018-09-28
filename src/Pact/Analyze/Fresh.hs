@@ -97,3 +97,22 @@ instance Monad m => MonadFresh id (ConstFreshT id m) where
 
 runConstFreshT :: ConstFreshT i m a -> i -> m a
 runConstFreshT = runReaderT . unConstFreshT
+
+
+
+
+-- ---- * DEMO * -------
+--
+-- newtype VarId = VarId Int deriving Enum
+-- newtype TagId = TagId Int deriving Enum
+--
+-- -- Fresh name generation for var IDs and tag IDs
+-- newtype App1 a = App1 (FreshT VarId (FreshT TagId (StateT Int IO)) a)
+--   deriving (Functor, Applicative, Monad,
+--             MonadState Int, MonadFresh VarId, MonadFresh TagId)
+--
+-- -- Fresh name generation for var IDs; constant/stubbed "generation" for tag IDs
+-- newtype App2 a = App2 (FreshT VarId (ConstFreshT TagId (StateT Int IO)) a)
+--   deriving (Functor, Applicative, Monad,
+--             MonadState Int, MonadFresh VarId, MonadFresh TagId)
+

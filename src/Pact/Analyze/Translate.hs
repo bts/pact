@@ -137,6 +137,7 @@ data TranslateState
   = TranslateState
     { _tsNextTagId     :: TagId
     , _tsNextVarId     :: VarId
+
     , _tsGraph         :: Alga.Graph Vertex
       -- ^ The execution graph we've built so far. This is expanded upon as we
       -- translate an entire function.
@@ -278,7 +279,7 @@ nodeInfo node = node ^. aId . Pact.tiInfo
 startSubpath :: Path -> TranslateM ()
 startSubpath p = do
   tsCurrentPath .= p
-  emit $ TraceSubpathStart p
+  emit $ TraceSubpathStart p -- TODO: factor this out
 
 startNewSubpath :: TranslateM Path
 startNewSubpath = do
@@ -676,6 +677,16 @@ translateNode astNode = withAstContext astNode $ case astNode of
         recovs :: [Recoverability]
         recovs = (Recoverable <$> take (pred n) failurePaths)
               ++ [Unrecoverable]
+
+    --
+    -- TODO: for this and ITE, we might get a lot of mileage out of tracking
+    --       the "currently unmerged" path heads.
+    --
+    -- But this'd be stateful :(
+    --
+    -- What about Cont, or delimited continuations, or an interface inspired
+    --   by delimited continuations (shift/reset)??
+    --
 
     (terms, vertices) <- fmap unzip $
       for (zip3 casesA newPaths recovs) $ \(caseA, mNewPath, recov) -> do

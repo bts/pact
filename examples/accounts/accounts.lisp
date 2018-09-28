@@ -75,24 +75,12 @@
   (defun check-balance (balance amount)
     (enforce (<= amount balance) "Insufficient funds"))
 
-  ;;
-  ;; TODO: implement read-msg, read-whatever in analysis
-  ;;
-
-  ;; TODO: seems like some sort of "event" logging could be quite helpful to pact
-
-  ;;
-  ;; TODO: should probably += amount
-  ;;
   (defun fund-account (address amount date)
     (enforce-keyset 'accounts-admin-keyset)
     (update accounts address
             { "balance": amount
             , "amount": amount
             , "date": date
-            ;;
-            ;; TODO: in another spot, "data" is a an object, not string.
-            ;;
             , "data": "Admin account funding" }
       ))
 

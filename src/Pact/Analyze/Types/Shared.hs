@@ -534,6 +534,10 @@ data Type a where
   TTime    :: Type Time
   TDecimal :: Type Decimal
   TKeySet  :: Type KeySet
+  --
+  -- TODO: we need an opaque blob that is separate from any... unless this
+  --       concept has been retired? waiting for stu to answer on #222.
+  --
   TAny     :: Type Any
 
 deriving instance Show (Type a)
