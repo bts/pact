@@ -32,13 +32,15 @@ import Control.Concurrent.MVar
 import Data.Aeson (eitherDecode,toJSON)
 import Data.Text.Encoding
 import Data.Maybe
-#if !defined(ghcjs_HOST_OS)
+#if defined(ghcjs_HOST_OS)
+import qualified Pact.Analyze.WebSocket.Client as WsClient
+#else
 import Control.Monad.State.Strict (get)
 import Criterion
 import Criterion.Types
 import qualified Data.Map as M
 import qualified Data.Text as Text
-import Pact.Analyze.Check
+import qualified Pact.Analyze.Check as Check
 #if MIN_VERSION_statistics(0,14,0)
 import Statistics.Types (Estimate(..))
 #else
@@ -347,7 +349,9 @@ tc i as = case as of
                 setop $ TcErrors $ map (\(Failure ti s) -> renderInfo (_tiInfo ti) ++ ":Warning: " ++ s) fails
                 return $ tStr $ "Typecheck " <> modname <> ": Unable to resolve all types"
 
-#if !defined(ghcjs_HOST_OS)
+#if defined(ghcjs_HOST_OS)
+-- TODO
+#else
 verify :: RNativeFun LibState
 verify i as = case as of
   [TLitString modName] -> do
@@ -356,8 +360,8 @@ verify i as = case as of
     case mdm of
       Nothing -> evalError' i $ "No such module: " ++ show modName
       Just md -> do
-        modResult <- liftIO $ verifyModule modules md
-        setop $ TcErrors $ fmap Text.unpack $ renderVerifiedModule modResult
+        modResult <- liftIO $ Check.verifyModule modules md
+        setop $ TcErrors $ fmap Text.unpack $ Check.renderVerifiedModule modResult
         return (tStr "")
 
   _ -> argsError i as

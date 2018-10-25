@@ -122,7 +122,7 @@ in
     };
     shells = {
       ghc = ["pact"];
-      # ghcjs = ["pact"];
+      ghcjs = ["pact"];
     };
 
   })

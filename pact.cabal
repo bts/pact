@@ -54,6 +54,11 @@ library
                      , Crypto.Hash.Blake2Native
                      , Pact.Types.Typecheck
                      , Pact.Typechecker
+
+  if impl(ghcjs)
+    exposed-modules:
+      Pact.Analyze.WebSocket.Client
+
   if !impl(ghcjs)
     hs-source-dirs: src-ghc
     exposed-modules:
@@ -88,6 +93,7 @@ library
       Pact.Analyze.Types.Shared
       Pact.Analyze.Types.UserShow
       Pact.Analyze.Util
+      Pact.Analyze.WebSocket.Server
       Pact.ApiReq
       Pact.Bench
       Pact.Docgen
@@ -151,6 +157,10 @@ library
                      , vector >= 0.11.0.0 && < 0.13
                      , vector-space >= 0.10.4 && < 0.14
                      , mmorph >= 1.0 && < 1.1
+
+  if impl(ghcjs)
+    build-depends:
+      ghcjs-base
 
   if !impl(ghcjs)
     build-depends:
