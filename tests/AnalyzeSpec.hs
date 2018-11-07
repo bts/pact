@@ -49,6 +49,9 @@ import           Pact.Analyze.PrenexNormalize (prenexConvert)
 import           Pact.Analyze.Types
 import           Pact.Analyze.Util            (dummyInfo, (...))
 
+--
+-- TODO: add tests for str-to-int
+--
 
 wrap :: Text -> Text -> Text
 wrap code model =

@@ -63,6 +63,10 @@ instance Wrapped SymbolicSuccess where
   type Unwrapped SymbolicSuccess = SBV Bool
   _Wrapped' = iso successBool SymbolicSuccess
 
+--
+-- TODO: potentially use quantified constraints here for:
+--         forall a. Mergeable a => Mergeable (m a)
+--
 class (MonadError AnalyzeFailure m, S :<: TermOf m) => Analyzer m where
   type TermOf m   :: * -> *
   eval            :: (Show a, SymWord a) => TermOf m a -> m (S a)

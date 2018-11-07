@@ -28,6 +28,7 @@ module Pact.Native
     ,hashDef
     ,ifDef
     ,readDecimalDef
+    ,baseStrToInt
     ) where
 
 import Control.Lens hiding (parts,Fold,contains)
@@ -609,13 +610,13 @@ strToInt i as =
     go base' txt =
       if T.all isHexDigit txt
       then
-        if T.length txt <= 128 
+        if T.length txt <= 128
         then case baseStrToInt base' txt of
           Left _ -> argsError i as
           Right n -> return (toTerm n)
         else evalError' i $ "Invalid input: unsupported string length: " ++ (unpack txt)
       else evalError' i $ "Invalid input: supplied string is not hex: " ++ (unpack txt)
-      
+
 txHash :: RNativeFun e
 txHash _ [] = (tStr . asString) <$> view eeHash
 txHash i as = argsError i as
@@ -626,7 +627,9 @@ txHash i as = argsError i as
 -- e.g.
 --   -- hexadecimal to decimal
 --   baseStrToInt 10 "abcdef123456" = 188900967593046
--- 
+--
+-- TODO(bts): fix logic here; check each digit to be in correct range.
+--
 baseStrToInt :: Integer -> Text -> Either Text Integer
 baseStrToInt base t =
   if base <= 1 || base > 16
@@ -637,5 +640,5 @@ baseStrToInt base t =
     else Right $ T.foldl' go 0 t
   where
     go :: Integer -> Char -> Integer
-    go acc w = base * acc + (fromIntegral . digitToInt $ w) 
+    go acc w = base * acc + (fromIntegral . digitToInt $ w)
 {-# INLINE baseStrToInt #-}
