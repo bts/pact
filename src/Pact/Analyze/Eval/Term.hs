@@ -468,7 +468,7 @@ evalTerm = \case
 
   WithCapability app body -> do
     grants <- accumulatingPendingGrants $
-      void $ evalETerm app
+      void $ evalETerm app -- TODO: we need to do this for gov module guard
 
     extendingGrants grants $
       evalTerm body

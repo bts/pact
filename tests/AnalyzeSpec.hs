@@ -9,7 +9,7 @@
 {-# LANGUAGE TypeApplications  #-}
 {-# LANGUAGE ViewPatterns      #-}
 
-module AnalyzeSpec (spec) where
+module AnalyzeSpec (spec, spec2) where
 
 import           Control.Lens                 (findOf, ix, matching, (&),
                                                (.~), (^..), _Left)
@@ -78,6 +78,16 @@ wrap code model =
          )
       (deftable accounts:{account}
         "Main table for test module.")
+      $code
+      )
+    (commit-tx)
+  |]
+
+wrapGov :: Text -> Text
+wrapGov code =
+  [text|
+    (begin-tx)
+    (module test GOV
       $code
       )
     (commit-tx)
@@ -209,6 +219,20 @@ pattern Abort' = PropSpecific Abort
 
 pattern Result' :: Prop t
 pattern Result' = PropSpecific Result
+
+spec2 :: Spec
+spec2 = do
+  let code =
+        [text|
+          (defcap GOV () true)
+
+          (defun test:bool ()
+            @model [(property result)]
+            true)
+        |]
+
+  res <- runIO $ runVerification $ wrapGov code
+  it "passes in-code checks" $ handlePositiveTestResult res
 
 spec :: Spec
 spec = describe "analyze" $ do
@@ -845,6 +869,18 @@ spec = describe "analyze" $ do
           [text|
             (defcap CAP (i:integer)
               true)
+
+            (defun test:bool ()
+              (with-capability (CAP 1)
+                true))
+          |]
+    expectPass code $ Valid Success'
+
+  describe "capability returning false succeeds because it doesn't throw" $ do
+    let code =
+          [text|
+            (defcap CAP (i:integer)
+              false)
 
             (defun test:bool ()
               (with-capability (CAP 1)

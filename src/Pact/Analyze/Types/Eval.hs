@@ -153,6 +153,9 @@ data TxMetadata
 data AnalyzeEnv
   = AnalyzeEnv
     { _aeModuleName   :: !Pact.ModuleName
+    --
+    -- TODO: _aeModuleGov :: Governance
+    --
     , _aePactMetadata :: !PactMetadata
     , _aeRegistry     :: !Registry
     , _aeTxMetadata   :: !TxMetadata

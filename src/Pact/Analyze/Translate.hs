@@ -1535,6 +1535,9 @@ mkExecutionGraph vertex0 rootPath st = ExecutionGraph
 
 runTranslation
   :: Pact.ModuleName
+  --
+  -- TODO: add module governance
+  --
   -> Text
   -> Info
   -> [Capability]
